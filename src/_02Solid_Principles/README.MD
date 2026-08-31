@@ -265,3 +265,509 @@ No changes are required in `IndianTax`, `USTax`, or `TaxCalculator`.
 ### Easy Formula
 
 > **Add a new class instead of changing an existing class.**
+> 
+---
+
+ 
+
+
+# Liskov Substitution Principle (LSP)
+
+The **L** in SOLID stands for the **Liskov Substitution Principle**.
+
+## Definition
+
+> A child class should be able to replace its parent class without breaking the program.
+
+In simple words, a subclass should correctly support the behaviour it inherits from its parent.
+
+---
+
+## Real-Life Analogy: Birds
+
+All birds can eat, but not all birds can fly:
+
+- A **sparrow** can eat and fly.
+- A **penguin** can eat but cannot fly.
+
+Therefore, `fly()` should not be placed inside the general `Bird` class. Otherwise, `Penguin` would inherit a behaviour it cannot perform.
+
+---
+
+## Without LSP — Bad Practice
+
+```java
+class Bird {
+
+    void eat() {
+        System.out.println("Bird is Eating...");
+    }
+
+    void fly() {
+        System.out.println("Bird is Flying...");
+    }
+}
+
+class Penguin extends Bird {
+
+    @Override
+    void fly() {
+        throw new UnsupportedOperationException(
+                "Penguin cannot fly"
+        );
+    }
+}
+```
+
+This violates LSP because replacing `Bird` with `Penguin` breaks the program:
+
+```java
+Bird bird = new Penguin();
+bird.fly(); // Runtime error
+```
+
+---
+
+## With LSP — Good Practice
+
+```java
+package _02Solid_Principles;
+
+class Bird {
+
+    void eat() {
+        System.out.println("Bird is Eating...");
+    }
+}
+
+class FlyingBird extends Bird {
+
+    void fly() {
+        System.out.println("Bird is Flying...");
+    }
+}
+
+class Sparrow extends FlyingBird {
+
+}
+
+class Penguin extends Bird {
+
+}
+
+public class _03Liskov_Substitution_Principle {
+
+    public static void main(String[] args) {
+
+        Sparrow sparrow = new Sparrow();
+        sparrow.eat();
+        sparrow.fly();
+
+        Penguin penguin = new Penguin();
+        penguin.eat();
+    }
+}
+```
+
+## Output
+
+```text
+Bird is Eating...
+Bird is Flying...
+Bird is Eating...
+```
+
+---
+
+## Explanation
+
+- `Bird` contains only the common `eat()` behaviour.
+- `FlyingBird` adds the `fly()` behaviour.
+- `Sparrow` extends `FlyingBird`, so it can eat and fly.
+- `Penguin` extends `Bird`, so it can eat but does not have `fly()`.
+
+Now both child classes correctly support the behaviour inherited from their parent classes.
+
+---
+
+## Advantages
+
+- Prevents unexpected runtime errors.
+- Creates correct inheritance relationships.
+- Makes the code easier to understand and maintain.
+- Child objects can safely replace parent objects.
+
+---
+
+## Quick Revision
+
+> **A child class should behave correctly wherever its parent class is expected.**
+
+### Easy Formula
+
+> **If a child cannot support a parent's behaviour, it should not inherit that behaviour.**
+
+
+
+
+ # Interface Segregation Principle (ISP)
+
+The **I** in SOLID stands for the **Interface Segregation Principle**.
+
+## Definition
+
+> A class should not be forced to implement methods that it does not need.
+
+In simple words, create **small and specific interfaces** instead of one large interface containing unrelated methods.
+
+---
+
+## Real-Life Analogy: Uber
+
+Uber has two types of users with different requirements:
+
+### Rider
+
+- Books a ride
+- Tracks the driver
+- Makes payment
+- Rates the driver
+
+### Driver
+
+- Accepts a ride
+- Starts the ride
+- Tracks earnings
+- Rates the passenger
+
+A rider does not need driver features, and a driver does not need rider features. Therefore, they should not be forced to use the same large interface.
+
+---
+
+## Without ISP — Bad Practice
+
+One large interface contains both rider and driver operations:
+
+```java
+interface UberUser {
+
+    void bookRide();
+    void trackDriver();
+    void makePayment();
+
+    void acceptRide();
+    void startRide();
+    void trackEarnings();
+}
+
+class Rider implements UberUser {
+
+    public void bookRide() {
+        System.out.println("Rider booked a ride...");
+    }
+
+    public void trackDriver() {
+        System.out.println("Rider is tracking the driver...");
+    }
+
+    public void makePayment() {
+        System.out.println("Rider made the payment...");
+    }
+
+    public void acceptRide() {
+        // Not required for Rider
+    }
+
+    public void startRide() {
+        // Not required for Rider
+    }
+
+    public void trackEarnings() {
+        // Not required for Rider
+    }
+}
+```
+
+The `Rider` is forced to implement driver methods it does not need. Similarly, a `Driver` would be forced to implement rider methods.
+
+This violates the Interface Segregation Principle.
+
+---
+
+## With ISP — Good Practice
+
+We divide the large interface into two smaller interfaces:
+
+```java
+package _02Solid_Principles;
+
+interface RiderActions {
+
+    void bookRide();
+    void trackDriver();
+    void makePayment();
+    void rateDriver();
+}
+
+interface DriverActions {
+
+    void acceptRide();
+    void startRide();
+    void trackEarnings();
+    void ratePassenger();
+}
+
+class Rider implements RiderActions {
+
+    public void bookRide() {
+        System.out.println("Rider booked a ride...");
+    }
+
+    public void trackDriver() {
+        System.out.println("Rider is tracking the driver...");
+    }
+
+    public void makePayment() {
+        System.out.println("Rider made the payment...");
+    }
+
+    public void rateDriver() {
+        System.out.println("Rider rated the driver...");
+    }
+}
+
+class Driver implements DriverActions {
+
+    public void acceptRide() {
+        System.out.println("Driver accepted the ride...");
+    }
+
+    public void startRide() {
+        System.out.println("Driver started the ride...");
+    }
+
+    public void trackEarnings() {
+        System.out.println("Driver is checking earnings...");
+    }
+
+    public void ratePassenger() {
+        System.out.println("Driver rated the passenger...");
+    }
+}
+
+public class _04Interface_Segregation_Principle {
+
+    public static void main(String[] args) {
+
+        Rider rider = new Rider();
+        rider.bookRide();
+        rider.trackDriver();
+        rider.makePayment();
+        rider.rateDriver();
+
+        Driver driver = new Driver();
+        driver.acceptRide();
+        driver.startRide();
+        driver.trackEarnings();
+        driver.ratePassenger();
+    }
+}
+```
+
+## Output
+
+```text
+Rider booked a ride...
+Rider is tracking the driver...
+Rider made the payment...
+Rider rated the driver...
+Driver accepted the ride...
+Driver started the ride...
+Driver is checking earnings...
+Driver rated the passenger...
+```
+
+---
+
+## Explanation
+
+- `RiderActions` contains only rider-related methods.
+- `DriverActions` contains only driver-related methods.
+- `Rider` implements only `RiderActions`.
+- `Driver` implements only `DriverActions`.
+
+Now, neither class is forced to implement unnecessary methods.
+
+---
+
+## Advantages
+
+- Avoids unnecessary methods.
+- Makes interfaces easier to understand.
+- Makes classes easier to maintain and test.
+- Reduces the effect of interface changes.
+
+---
+
+## Quick Revision
+
+> **Clients should not be forced to depend on methods they do not use.**
+
+### Easy Formula
+
+> **Create multiple small interfaces instead of one large interface.**
+
+
+
+
+
+ # Dependency Inversion Principle (DIP)
+
+The **D** in SOLID stands for the **Dependency Inversion Principle**.
+
+## Definition
+
+> High-level classes should not directly depend on low-level classes. Both should depend on an abstraction, such as an interface.
+
+In simple words, a class should depend on an **interface** instead of directly depending on a specific class.
+
+---
+
+## Real-Life Analogy: Sending Notifications
+
+An application may send notifications through:
+
+- Email
+- SMS
+- WhatsApp
+
+The main notification service should not be permanently connected to only email. It should work with any notification method.
+
+---
+
+## Without DIP — Bad Practice
+
+```java
+class EmailSender {
+
+    void sendMessage() {
+        System.out.println(
+                "Notification sent through Email..."
+        );
+    }
+}
+
+class NotificationService {
+
+    private EmailSender emailSender = new EmailSender();
+
+    void sendNotification() {
+        emailSender.sendMessage();
+    }
+}
+```
+
+`NotificationService` directly depends on `EmailSender`.
+
+To use SMS, we must modify the `NotificationService` class. This creates tight coupling and violates DIP.
+
+---
+
+## With DIP — Good Practice
+
+```java
+package _02Solid_Principles;
+
+interface MessageSender {
+
+    void sendMessage();
+}
+
+class EmailSender implements MessageSender {
+
+    public void sendMessage() {
+        System.out.println(
+                "Notification sent through Email..."
+        );
+    }
+}
+
+class SmsSender implements MessageSender {
+
+    public void sendMessage() {
+        System.out.println(
+                "Notification sent through SMS..."
+        );
+    }
+}
+
+class NotificationService {
+
+    private MessageSender messageSender;
+
+    NotificationService(MessageSender messageSender) {
+        this.messageSender = messageSender;
+    }
+
+    void sendNotification() {
+        messageSender.sendMessage();
+    }
+}
+
+public class _05Dependency_Inversion_Principle {
+
+    public static void main(String[] args) {
+
+        MessageSender email = new EmailSender();
+        NotificationService emailService =
+                new NotificationService(email);
+
+        emailService.sendNotification();
+
+        MessageSender sms = new SmsSender();
+        NotificationService smsService =
+                new NotificationService(sms);
+
+        smsService.sendNotification();
+    }
+}
+```
+
+## Output
+
+```text
+Notification sent through Email...
+Notification sent through SMS...
+```
+
+---
+
+## Explanation
+
+- `MessageSender` is the abstraction.
+- `EmailSender` and `SmsSender` are implementations.
+- `NotificationService` depends on `MessageSender`, not on a specific sender.
+- The required sender is passed through the constructor.
+
+Passing a dependency from outside through a constructor is called **Dependency Injection**.
+
+We can add WhatsApp notifications by creating another class that implements `MessageSender`. The `NotificationService` class does not need to change.
+
+---
+
+## Advantages
+
+- Reduces tight coupling.
+- Makes implementations easy to replace.
+- Makes code easier to extend and test.
+- Existing high-level code requires fewer changes.
+
+---
+
+## Quick Revision
+
+> **Depend on abstractions, not concrete classes.**
+
+### Easy Formula
+
+> **Class → Interface → Implementation**
