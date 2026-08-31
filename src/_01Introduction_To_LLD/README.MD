@@ -4,13 +4,13 @@ Software design principles are guidelines that help us write code that is clean,
 
 This note covers three important principles:
 
-1. DRY â€” Don't Repeat Yourself
-2. KISS â€” Keep It Simple, Stupid
-3. YAGNI â€” You Aren't Gonna Need It
+1. DRY : Don't Repeat Yourself
+2. KISS : Keep It Simple, Stupid
+3. YAGNI : You Aren't Gonna Need It
 
 ---
 
-## 1. DRY â€” Don't Repeat Yourself
+## 1. DRY : Don't Repeat Yourself
 
 ### Definition
 
@@ -42,7 +42,7 @@ The discount logic is written only once. If the rate changes, we only need to up
 
 ---
 
-## 2. KISS â€” Keep It Simple, Stupid
+## 2. KISS : Keep It Simple, Stupid
 
 ### Definition
 
@@ -83,7 +83,7 @@ Both versions give the same result, but the second version is shorter and easier
 
 ---
 
-## 3. YAGNI â€” You Aren't Gonna Need It
+## 3. YAGNI : You Aren't Gonna Need It
 
 ### Definition
 
